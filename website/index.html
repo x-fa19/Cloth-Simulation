@@ -25,16 +25,117 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
 <h1 align="middle">Project 4: Cloth Simulator</h1>
-<h2 align="middle">YOUR NAME, CS184-??</h2>
+<h2 align="middle">Fonda Xu, CS184-aaj</h2>
 
 <br><br>
 
 <div>
 
 <h2 align="middle">Overview</h2>
-<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+<p>In this project, the goal was to create an underlying cloth structure consisting of point masses and springs, then to successfully implement behavior that would allow this structure to have cloth-like behavior. (Ex. Behavior of cloth when colliding with other objects, or with itself) There is also a brief exploration into writing and applying different shaders to the cloth mesh at the end.</p>
 
-<h2 align="middle">Part I: Masses and springs</h2>
+<h2 align="middle">Part 1: Masses and Springs</h2>
+
+<p>The first task is to construct a cloth model that will be used in the simulations. We construct our cloth using a system of point masses and springs. Each cloth consists of a grid of point masses, connected by springs, which consist of three different types: Structural, shearing, or bending springs. Each of these springs are connected to different point masses in the model, and behave differently.</p>
+
+<p>Point masses and springs should be created and stored separately into the <i>point_masses</i> and <i>springs</i> vectors. In particular, springs should contain pointers to the point masses that they connect. We iterate through the entire grid to create all point masses and springs for a cloth model. Additionally, we also note point masses which are pinned, and behave differently from other non-pinned point masses.</p>
+
+<p><u>Results:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p1-pinned2-full.png" width="480px" />
+				<figcaption align="middle">Full structure, pinned2.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p1-pinned2-close.png" width="480px" />
+				<figcaption align="middle">Close-up, pinned2.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>Details:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p1-pinned2_all.png" width="480px" />
+				<figcaption align="middle">All springs included, pinned2.json</figcaption>
+			</td>
+		</tr>
+		<tr>
+			<td align="middle">
+				<img src="images/p1_pinned2_no_shear.png" width="480px" />
+				<figcaption align="middle">No SHEARING springs included, pinned2.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p1-pinned2_only_shear.png" width="480px" />
+				<figcaption align="middle">Only SHEARING springs included, pinned2.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<h2 align="middle">Part 2: Simulation (via Numerical Integration)</h2>
+
+<p>After having implemented the cloth model in the previous section, we now move on to simulating motion on the point masses of the cloth. Here, there are two forces that need to be accounted for: External forces, and spring correction forces. External forces affect the cloth uniformly -for example, gravity. Spring correction forces vary between point masses, and computation may differ depending on the spring type.</p>
+
+<p>To implement movement in the simulation, we first compute the total force acting on each point mass. This can be done via application of the external force and the spring correction forces to each point mass. External forces can be applied to each point mass directly, but when applying spring correction forces, this should be done using Hooke's law. Since this force is a spring correction force, the force vector should be applied to one point mass of the spring, and an opposite but equal force vector should also be applied to the other point mass of the spring.</p>
+
+<p>Next, we move onto integration: In this case, we use Verlet integration to calculate new point mass positions. This allows us to compute each point mass' change in position for every time step. In order to keep the springs from being unreasonably deformed, we also contrain these changes in positions such that the new length is at most 10% greater than its rest_length at the end of any time step.</p>
+
+<p><u>Results:</u></p>
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p2-pinned2-wire.png" width="480px" />
+				<figcaption align="middle">pinned2.json</figcaption>
+			</td>
+		</tr>
+		<tr>
+			<td align="middle">
+				<video width="480" controls>
+					<source src="videos/pinned2_base.mp4" type="video/mp4">
+						ABC
+				</video>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>pinned4.json:</u></p>
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p2-pinned4-wire.png" width="480px" />
+				<figcaption align="middle">Wire, pinned4.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p2-pinned4-norm.png" width="480px" />
+				<figcaption align="middle">Normal, pinned4.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+<h2 align="middle">Part 3: Collisions (with Other Objects)</h2>
+
+<p>After having successfully simulated physics-based movement of the cloth, now we account for collisions of the cloth with other objects in the scene: Specifically, spheres and planes. The details are as follows:</p>
+
+<h2 align="middle">Part 4: Collisions (Self-Collisions)</h2>
+
+<p>Aside from collisions with other objects, collisions of the cloth against itself are also important. </p>
+
+<h2 align="middle">Part 5: Shaders</h2>
+
+<p>Shaders are ___. There are several different shaders implemented in this project, as follows:</p>
 
 
 </body>
