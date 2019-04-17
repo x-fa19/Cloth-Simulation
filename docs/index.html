@@ -101,14 +101,67 @@
 			<td align="middle">
 				<video width="480" controls>
 					<source src="videos/pinned2_base.mp4" type="video/mp4">
-						ABC
 				</video>
+				<figcaption align="middle">pinned2.json</figcaption>
 			</td>
 		</tr>
 	</table>
 </div>
 
-<p><u>pinned4.json:</u></p>
+<p>Experimenting with the different parameters in the simulation, we can observe some different behaviors, as follows:</p> 
+<p><u>ks (spring constant):</u> When we modify the ks, we notice that a low ks will yield a looser, "stretchier" cloth, while a high ks will yield a stiffer cloth. This is because a low ks indicates weaker springs, while a high ks indicates stronger springs, which changes the "stretch" property of the cloth.</p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p2-pinned2-norm-k5h.png" width="480px" />
+				<figcaption align="middle">ks = 500, pinned2.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p2-pinned2-norm-k50k.png" width="480px" />
+				<figcaption align="middle">ks = 50000, pinned2.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+ <p><u>Density:</u> When we modify the density, we notice that when the density is low, the cloth seems very "light" and "flat," in contrast to a higher-density cloth, which results in the opposite behavior. This is because denser objects have stronger gravitational pull.</p>
+
+ <div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p2-pinned2-norm-d1.png" width="480px" />
+				<figcaption align="middle">gravity = 1, pinned2.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p2-pinned2-norm-d50.png" width="480px" />
+				<figcaption align="middle">gravity = 50, pinned2.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+ <p><u>Damping:</u> When we modify the damping, we notice that the speed at which the cloth falls is visibly different; when damping is small, the cloth falls fairly quickly and with greater force than a cloth with higher damping. This is because damping is a term that we use to simulate the loss of energy due to friction, heat loss, etc. and directly scales down the velocity at which the cloth moves in each time step.</p>
+
+ <div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p2-pinned2-norm-lowdamp.png" width="480px" />
+				<figcaption align="middle">damping is approximately 0.01, pinned2.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p2-pinned2-norm-highdamp.png" width="480px" />
+				<figcaption align="middle">damping is approximately 0.33, pinned2.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>Other results: pinned4.json:</u></p>
 <div align="center">
 	<table style="width=100%">
 		<tr>
@@ -129,14 +182,227 @@
 
 <p>After having successfully simulated physics-based movement of the cloth, now we account for collisions of the cloth with other objects in the scene: Specifically, spheres and planes. The details are as follows:</p>
 
+<p><u>Spheres</u>: Check the position of each point mass; if it has fallen within the sphere, then we apply a correction vector to the point mass' previous position and correct the point mass so that its current position is on the sphere, rather than inside it.</p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr align>
+			<td align="middle">
+				<img src="images/p3-sphere-5k.png" width="480px" />
+				<figcaption align="middle">Default ks = 5000, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<video width="480" controls>
+					<source src="videos/sphere_collision.mp4" type="video/mp4">
+				</video>
+				<figcaption align="middle">sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p3-sphere-5h.png" width="480px" />
+				<figcaption align="middle">ks = 500, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p3-sphere-50k.png" width="480px" />
+				<figcaption align="middle">ks = 50000, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>Planes</u>: Check the position of each point mass; if it has fallen under the plane, then we apply a correction vector to the point mass' previous position such that its current position is on the plane, rather than underneath it.</p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p3-plane.png" width="480px" />
+				<figcaption align="middle">Plane, plane.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
 <h2 align="middle">Part 4: Collisions (Self-Collisions)</h2>
 
-<p>Aside from collisions with other objects, collisions of the cloth against itself are also important. </p>
+<p>Aside from collisions with other objects, collisions of the cloth against itself are also important. We use spatial hashing for efficiency in detecting self-collisions in the cloth; by hashing and representing all point masses to 3D boxes in the scene, we can iterate through each box to check for collisions between point masses instead of comparing every single point mass against each other in an inefficient O(n^2) solution.</p>
+
+<p>Once a collision has been detected, we average out all detected collisions of a point mass and use it to compute a correction vector that we then scale down by simulation_steps, before adding to the point mass. We consider two point masses to have a valid collision when they are within 2*thickness distance of each other, in which case our correction vector needs to ensure that they are 2*thickness apart.</p>
+
+<p><u>Results:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p4-1.png" width="480px" />
+				<figcaption align="middle">Self-Collision(1), selfCollision.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p4-2.png" width="480px" />
+				<figcaption align="middle">Self-Collision(2), selfCollision.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p4-3.png" width="480px" />
+				<figcaption align="middle">Self-Collision(3), selfCollision.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>In Action:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<video width="480" controls>
+					<source src="videos/self_collision.mp4" type="video/mp4">
+				</video>
+				<figcaption align="middle">Self-Collision, selfCollision.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p>Varying the parameters of the simulation, we can observe some different behaviors. When density is low, the cloth appears to be a lot lighter and moves more than when the density is high. When ks (spring constant) is low, the cloth appears to be much stretchier than when the ks is high. </p>
 
 <h2 align="middle">Part 5: Shaders</h2>
 
-<p>Shaders are ___. There are several different shaders implemented in this project, as follows:</p>
+<p>The purpose of a shader, as the name suggests, is to "shade" a model. Shader programs take in infomation such as vertices, textures, etc. and return modified verticies and/or pixel colors to be used in shading. Generally, vertices are modified in .vert, and pixels are modified in .frag.</p>
 
+<p>The Blinn-Phong shading model is a model of shading that accounts for specular lights in the model; more specifically, the Phong model approximates microfacets and allows us to have specular highlights along the viewing direction, and the Blinn-Phong model is a modification of the Phong model such that angles are computed using the half vector. (In the Phong model, the angle between the viewing direction and the reflected direction must be less than 90 degrees in order for there to be a nonzero specular term; angles larger than 90 degrees are not modeled correctly by the Phong model.) This can be seen in the following image and breakdown:</p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-bp-all.png" width="480px" />
+				<figcaption align="middle">Blinn-Phong, all, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-bp-ambient.png" width="480px" />
+				<figcaption align="middle">Blinn-Phong, ambient, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-bp-diffuse.png" width="480px" />
+				<figcaption align="middle">Blinn-Phong, diffuse, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-bp-specular.png" width="480px" />
+				<figcaption align="middle">Blinn-Phong, specular, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p>Texture mapping is also implemented in this project, and can be accomplished by directly sampling from the given texture, with results as follows:</p>
+
+<p><u>Texture mapping:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-texture.png" width="480px" />
+				<figcaption align="middle">___, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p>The implementation of bump mapping and displacement mapping are very similar, but with a key difference: Displacement mapping implements bump mapping, but with modified vertices in .vert. In other words, displacement mapping quite literally <i>displaces</i> the vertices of bump mapping, as can be seen below:</p>
+
+<p><u>Sphere:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-bump-sphere.png" width="480px" />
+				<figcaption align="middle">Bump, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-displace-sphere.png" width="480px" />
+				<figcaption align="middle">Disaplcement, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>Cloth:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-bump-cloth.png" width="480px" />
+				<figcaption align="middle">Bump, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-displace-cloth.png" width="480px" />
+				<figcaption align="middle">Displacement, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p>Modifying the mesh coarseness, we can observe that there are more details in the "flowiness" and overall structure movement of the cloth in the larger mesh than the smaller; larger meshes allow for more details in the mesh structure, which we can see reflected in the cloth simulation. The larger mesh also makes the changes in displacement more pronounced, due to the greater number of vertices.</p>
+
+<p><u>Bump, displacement (with varying mesh coarseness):</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-bump-16.png" width="480px" />
+				<figcaption align="middle">Bump, -o 16 -a 16, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-bump-128.png" width="480px" />
+				<figcaption align="middle">Bump, -o 128 -a 128, sphere.json</figcaption>
+			</td>
+		</tr>
+		<tr>
+			<td align="middle">
+				<img src="images/p5-displace-16.png" width="480px" />
+				<figcaption align="middle">Displacement, -o 16 -a 16, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-displace-128.png" width="480px" />
+				<figcaption align="middle">Displacement, -o 128 -a 128, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p><u>Mirror:</u></p>
+
+<div align="center">
+	<table style="width=100%">
+		<tr>
+			<td align="middle">
+				<img src="images/p5-mirror-sphere.png" width="480px" />
+				<figcaption align="middle">Mirror, sphere, sphere.json</figcaption>
+			</td>
+			<td align="middle">
+				<img src="images/p5-mirror-cloth.png" width="480px" />
+				<figcaption align="middle">Mirror, cloth, sphere.json</figcaption>
+			</td>
+		</tr>
+	</table>
+</div>
 
 </body>
 </html>

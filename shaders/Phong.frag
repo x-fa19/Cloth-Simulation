@@ -22,7 +22,7 @@ void main() {
   vec3 v = u_cam_pos - v_position.xyz;
   vec3 h = (v + l) / length(v + l);
 
-  vec3 phong = 0.5 * (u_light_intensity / r2) * pow(max(0, dot(v_normal.xyz, normalize(h))), 40);
+  vec3 phong = (u_light_intensity / r2) * pow(max(0, dot(v_normal.xyz, normalize(h))), 80);
   vec3 diff = (u_light_intensity / r2) * max(0, dot(v_normal.xyz, normalize(l)));
 
   out_color.rgb = diff + phong;

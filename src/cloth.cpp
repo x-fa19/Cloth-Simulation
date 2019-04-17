@@ -197,7 +197,7 @@ void Cloth::self_collide(PointMass &pm, double simulation_steps) {
 		if (&pm != candidate) {
 			//double distance = (pm.position - candidate->position).norm();
 			double distance = (candidate->position - pm.position).norm();
-			if (distance <= (2 * thickness)) { //within self collision range
+			if (distance < (2 * thickness)) { //within self collision range
 				//correction += (candidate->position - pm.position).unit() * (distance - (2 * thickness));
 				correction += (pm.position - candidate->position).unit() * ((2 * thickness) - distance);
 				count++;
@@ -223,7 +223,7 @@ float Cloth::hash_position(Vector3D pos) {
 	int y_num = floor(pos.y/ h);
 	int z_num = floor(pos.z/ t);/**/
 
-	float box = x_num * pow(113, 2) + y_num * 113 + z_num;
+	float box = x_num * powf(113.0, 2.0) + y_num * 113.0 + z_num;
 	//cout << "box: " << box << "\n";
 	return box;
 }
