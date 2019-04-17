@@ -278,7 +278,7 @@
 
 <p>The purpose of a shader, as the name suggests, is to "shade" a model. Shader programs take in infomation such as vertices, textures, etc. and return modified verticies and/or pixel colors to be used in shading. Generally, vertices are modified in .vert, and pixels are modified in .frag.</p>
 
-<p>The Blinn-Phong shading model is a model of shading that accounts for specular lights in the model; more specifically, the Phong model approximates microfacets and allows us to have specular highlights along the viewing direction, and the Blinn-Phong model is a modification of the Phong model such that angles are computed using the half vector. (In the Phong model, the angle between the viewing direction and the reflected direction must be less than 90 degrees in order for there to be a nonzero specular term; angles larger than 90 degrees are not modeled correctly by the Phong model.) This can be seen in the following image and breakdown:</p>
+<p>The Blinn-Phong shading model is a model of shading that accounts for both diffuse and specular lighting; more specifically, the Phong model approximates microfacets and allows us to combine diffuse lighting with specular highlights along the viewing direction. The Blinn-Phong model is a modification of the Phong model such that angles are computed using the half vector. (In the Phong model, the angle between the viewing direction and the reflected direction must be less than 90 degrees in order for there to be a nonzero specular term; angles larger than 90 degrees are not modeled correctly by the Phong model.) This can be seen in the following image and breakdown:</p>
 
 <div align="center">
 	<table style="width=100%">
