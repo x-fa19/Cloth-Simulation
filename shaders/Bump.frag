@@ -49,13 +49,6 @@ void main() {
   vec3 diff = (u_light_intensity / r2) * max(0, dot(nd, normalize(l)));
 
   out_color.rgb = diff + phong;
-
-  //normal testing:
-  //out_color.rgb = (vec3(1, 1, 1) + nd) / 2;
-  //out_color.a = 1;
-  
-  // (Placeholder code. You will want to replace it.)
-  //out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
   out_color.a = 1;
 }
 
